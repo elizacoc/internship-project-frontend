@@ -1,0 +1,118 @@
+<button mat-raised-button color="primary" (click)="createProduct()">Add product</button>
+<div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+  
+      <!-- Pzn Column -->
+      <ng-container matColumnDef="pzn">
+        <th mat-header-cell *matHeaderCellDef> Pzn </th>
+        <td mat-cell *matCellDef="let product"> {{product.pzn}} </td>
+      </ng-container>
+  
+      <!-- Supplier Column -->
+      <ng-container matColumnDef="supplier">
+        <th mat-header-cell *matHeaderCellDef> Supplier </th>
+        <td mat-cell *matCellDef="let product"> {{product.supplier}} </td>
+      </ng-container>
+  
+      <!-- Product Name Column -->
+      <ng-container matColumnDef="productName">
+        <th mat-header-cell *matHeaderCellDef> Product Name </th>
+        <td mat-cell *matCellDef="let product"> {{product.productName}} </td>
+      </ng-container>
+  
+      <!-- Strength Column -->
+      <ng-container matColumnDef="strength">
+        <th mat-header-cell *matHeaderCellDef> Strength </th>
+        <td mat-cell *matCellDef="let product"> {{product.strength}} </td>
+      </ng-container>
+
+      <!-- Package Size Column -->
+      <ng-container matColumnDef="packageSize">
+        <th mat-header-cell *matHeaderCellDef> PackageSize </th>
+        <td mat-cell *matCellDef="let product"> {{product.packageSize}} </td>
+      </ng-container>
+
+      <!-- Unit Column -->
+      <ng-container matColumnDef="unit">
+        <th mat-header-cell *matHeaderCellDef> Unit </th>
+        <td mat-cell *matCellDef="let product"> {{product.unit}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="stockPrice">
+        <th mat-header-cell *matHeaderCellDef> Price </th>
+        <!-- <td mat-cell *matCellDef="let product"> {{!!toggleButton ? product.stock?.price : undefined}}</td> -->
+        <td mat-cell *matCellDef="let product"> {{product.stock?.price}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="stockQuantity">
+        <th mat-header-cell *matHeaderCellDef> Quantity </th>
+        <!-- <td mat-cell *matCellDef="let product">{{!!toggleButton ? product.stock?.quantity : undefined}}</td> -->
+        <td mat-cell *matCellDef="let product">{{product.stock?.quantity}}</td>
+      </ng-container>
+
+      <!-- Edit Column -->
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell  *matHeaderCellDef > Update </th>
+        <td mat-cell *matCellDef="let product" >
+          <button mat-raised-button color="accent" aria-label="Update product" (click)="updateProduct(product)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Delete Column -->
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell  *matHeaderCellDef > Delete </th>
+        <td mat-cell *matCellDef="let product" >
+          <button mat-raised-button color="warn" aria-label="Delete product" (click)="deleteProduct(product)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+
+      <!-- Get Stock Column -->
+      <ng-container matColumnDef="getStock">
+        <th mat-header-cell  *matHeaderCellDef > Stock </th>
+        <td mat-cell *matCellDef="let product" >
+          <button mat-raised-button color="warn" aria-label="Get stock" (click)="getStock(product.pzn)">
+            <mat-icon>info</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      
+    </table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                   showFirstLastButtons 
+                   aria-label="Select page of products">
+    </mat-paginator>
+  </div>
+
+<!-- <button type="button" (click)="createProduct()">Add product</button>
+<table>
+    <tr>
+        <th>Pzn</th>
+        <th>Supplier</th>
+        <th>Product Name</th>
+        <th>Strength</th>
+        <th>Package Size</th>
+        <th>Unit</th>
+        <th>Options</th>
+    </tr>
+    <tr *ngFor="let product of productList">
+        <td>{{product.pzn}}</td>
+        <td>{{product.supplier}}</td>
+        <td>{{product.productName}}</td>
+        <td>{{product.strength}}</td>
+        <td>{{product.packageSize}}</td>
+        <td>{{product.unit}}</td>
+        <td>
+            <button type = "button" (click)="updateProduct(product)">Update product</button>
+            <button type = "button" (click)="deleteProduct(product)">Delete product</button>
+        </td>
+    </tr>
+</table> -->

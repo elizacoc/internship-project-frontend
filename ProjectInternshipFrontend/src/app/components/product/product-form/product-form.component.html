@@ -1,0 +1,49 @@
+<form [formGroup]="productForm" (ngSubmit)="submitProductForm()">
+    <div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Pzn</mat-label>
+                <input matInput placeholder="012345678" formControlName="pzn">
+                <mat-error *ngIf="productForm.controls['pzn'].invalid">{{getErrorMessagePzn()}}</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Supplier</mat-label>
+                <input matInput formControlName="supplier">
+                <mat-error *ngIf="productForm.controls['supplier'].invalid">{{getErrorMessageSupplier()}}</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Product Name</mat-label>
+                <input matInput formControlName="productName">
+                <mat-error *ngIf="productForm.controls['productName'].invalid">{{getErrorMessageProductName()}}</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Strength</mat-label>
+                <input matInput formControlName="strength">
+                <mat-error *ngIf="productForm.controls['strength'].invalid">{{getErrorMessageStrength()}}</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Package Size</mat-label>
+                <input matInput formControlName="packageSize">
+                <mat-error *ngIf="productForm.controls['packageSize'].invalid">{{getErrorMessagePackageSize()}}</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Unit</mat-label>
+                <mat-select formControlName="unit">
+                  <mat-option [value]="unit.key" *ngFor="let unit of unitOptions">{{unit.value}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="productForm.controls['unit'].invalid">{{getErrorMessageUnit()}}</mat-error>
+              </mat-form-field>
+        </div>
+    </div>
+    <button mat-raised-button color="primary" type="submit">Add product</button>
+</form>
