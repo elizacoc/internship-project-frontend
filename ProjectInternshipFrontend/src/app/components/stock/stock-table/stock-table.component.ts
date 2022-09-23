@@ -34,6 +34,11 @@ export class StockTableComponent implements OnInit, OnDestroy {
       this._router.navigate([`/stocks/update/${stock.id}`])
   }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
   ngOnDestroy(): void {
     this._subscriptionList.forEach((subscription: Subscription) => subscription.unsubscribe());
   }

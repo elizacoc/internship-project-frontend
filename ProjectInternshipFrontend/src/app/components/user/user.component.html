@@ -1,0 +1,125 @@
+<h1>Hello {{userDetails.username}}</h1>
+<div class="mat-elevation-z8">
+
+    <table mat-table [dataSource]="dataSource">
+  
+        <!-- FirstName Column -->
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef> First Name </th>
+            <td mat-cell *matCellDef="let user"> {{user.firstName}} </td>
+   
+        </ng-container>
+    
+        <!-- LastName Column -->
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef> LastName </th>
+         
+            <td mat-cell *matCellDef="let user"> {{user.lastName}} </td>
+          
+          
+        </ng-container>
+  
+        <!-- Username Column -->
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef> Username </th>
+          
+     
+            <td mat-cell *matCellDef="let user"> {{user.username}} </td>
+          
+        </ng-container>
+  
+       <!-- Email Column -->
+       <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        
+  
+            <td mat-cell *matCellDef="let user"> {{user.email}} </td>
+      
+      </ng-container>
+
+      <!-- Creation Date Column -->
+      <ng-container matColumnDef="creationDate">
+        <th mat-header-cell *matHeaderCellDef> Creation Date </th>
+        
+        
+            <td mat-cell *matCellDef="let user"> {{user.creationDate}} </td>
+          
+      </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <!-- <table mat-table>
+
+
+
+        <tr mat-header-row>
+            <th mat-header-cell>Fist Name</th>
+            <th mat-header-cell>Last Name</th>
+            <th mat-header-cell>Username</th>
+            <th mat-header-cell>Email</th>
+            <th mat-header-cell>Account creation date</th>
+        </tr>
+        <tr mat-row>
+            <td mat-cell>{{userDetails.firstName}}</td>
+            <td mat-cell>{{userDetails.lastName}}</td>
+            <td mat-cell>{{userDetails.username}}</td>
+            <td mat-cell>{{userDetails.email}}</td>
+            <td mat-cell>{{userDetails.creationDate}}</td>
+        </tr> -->
+        
+    </table>
+</div>
+
+
+<button mat-raised-button (click)="toggleUserUpdate()">Update account details</button>
+<div *ngIf="!!toggleUserUpdateForm">
+    <form [formGroup]="updateUserForm" (ngSubmit)="updateAccount()">
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName">
+                <mat-error *ngIf="updateUserForm.controls['firstName'].touched && updateUserForm.controls['firstName'].hasError('required')">This field is required! If you do not wish to change it, leave the previous value!</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName">
+                <mat-error *ngIf="updateUserForm.controls['lastName'].touched && updateUserForm.controls['lastName'].hasError('required')">This field is required! If you do not wish to change it, leave the previous value!</mat-error>
+            </mat-form-field>
+        </div>
+    <div>
+        <mat-form-field appearance="outline">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username">
+            <mat-error *ngIf="updateUserForm.controls['username'].touched && updateUserForm.controls['username'].hasError('required')">This field is required! If you do not wish to change it, leave the previous value!</mat-error>
+            <mat-error *ngIf="updateUserForm.controls['username'].hasError('maxlength') || updateUserForm.controls['username'].hasError('minlength')">This field must be between 5 and 50 characters</mat-error>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="!!showPassword ? 'text' : 'password'">
+            <mat-icon matSuffix (click)="showPassword = !showPassword">{{!!showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-error *ngIf="updateUserForm.controls['password'].touched && updateUserForm.controls['password'].hasError('required')">This field is required!</mat-error>
+            <mat-error *ngIf="updateUserForm.controls['password'].hasError('maxlength') || updateUserForm.controls['password'].hasError('minlength')">This field must be between 8 and 20 characters</mat-error>
+            <mat-error *ngIf="updateUserForm.controls['password'].hasError('pattern')">The password must contain at least 1 capital letter, 1 small letter, 1 digit and 1 symbol!</mat-error>
+        </mat-form-field>
+    </div>
+    <div>
+        <mat-form-field appearance="outline">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput formControlName='confirmPassword' [errorStateMatcher]="errorMatcher" [type]="!!showConfirmedPassword ? 'text' :'password'">
+            <mat-icon matSuffix (click)="showConfirmedPassword = !showConfirmedPassword">{{!!showConfirmedPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <mat-error *ngIf="updateUserForm.hasError('passwordsDoNotMatch')">Passwords do not match!</mat-error>
+            <mat-error *ngIf="updateUserForm.controls['confirmPassword'].touched && updateUserForm.controls['confirmPassword'].hasError('required')">This field is required!</mat-error>
+          </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" type="submit" [disabled]="updateUserForm.invalid">updateAccount</button>
+    </form>
+</div>
+
+<section class="error-box" *ngIf="isAnyError">
+    <p>{{ errors }}</p>
+</section>
+

@@ -19,10 +19,11 @@ export class ProductTableComponent implements OnInit, OnDestroy{
 
   productList: Product[] = [];
   subscriptionList: Subscription[] = [];
+  productDeleted!: Product;
 
   toggleButton: boolean = false;
 
-  displayedColumns: string[] = ['pzn', 'supplier', 'productName', 'strength', 'packageSize', 'unit', 'stockPrice','stockQuantity', 'edit', 'delete', 'getStock'];
+  displayedColumns: string[] = ['pzn', 'supplier', 'productName', 'strength', 'packageSize', 'unit', 'stockPrice','stockQuantity', 'edit', 'delete', 'getStock', 'editStock'];
   dataSource = new MatTableDataSource<Product>(this.productList);
 
   constructor(private _productService: ProductService, private _stockService: StockService, private _router: Router) { }
@@ -35,6 +36,9 @@ export class ProductTableComponent implements OnInit, OnDestroy{
         this.dataSource = new MatTableDataSource<Product>(this.productList);
         this.dataSource.paginator = this.paginator;
       })
+
+      
+     
     );
   }
 
@@ -47,9 +51,13 @@ export class ProductTableComponent implements OnInit, OnDestroy{
   }
 
   deleteProduct(product: Product){
-    this._productService.deleteProduct(product.pzn).subscribe((product) => {
+    this._productService.deleteProduct(product.pzn).subscribe(() => {
       console.log('The product: ', product, ' was deleted');
-      window.location.reload();
+      this.productList = this.productList.filter(
+        (productInList: Product) => productInList.pzn !== product.pzn
+      )
+      this.dataSource = new MatTableDataSource<Product>(this.productList);
+      this.dataSource.paginator = this.paginator;
     })
   }
 
@@ -63,7 +71,20 @@ export class ProductTableComponent implements OnInit, OnDestroy{
       this.toggleButton = !this.toggleButton
     })
     )
-    
+    this.toggleButton = !this.toggleButton
+  }
+
+  editStock(pzn: string){
+    this.subscriptionList.push(
+      this._stockService.getStockByProductPzn(pzn).subscribe((stock: Stock) => {
+        this._router.navigate([`/stocks/update/${stock.id}`])
+      })
+    )
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
   
   ngOnDestroy(): void {

@@ -2,3 +2,13 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+form {
+    text-align: center;
+  }
+
+  .error-box {
+    color: red;
+    margin-inline-start: 10px;
+    margin-block: 10px;
+    font-size: 16;
+}

@@ -1,0 +1,93 @@
+<div *ngIf="!isRegisterActive">
+    <span>Do not have an account? <a routerLink="/register" style="cursor:pointer">Register</a></span>
+    <form [formGroup]="loginForm" (ngSubmit)="login()" >
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email">
+                <mat-error *ngIf="loginForm.controls['email'].touched && loginForm.controls['email'].hasError('required')">Please enter the email!</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" [type]="!!showPassword ? 'text' : 'password'">
+                <mat-icon matSuffix (click)="showPassword=!showPassword">{{!!showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                <mat-error *ngIf="loginForm.controls['password'].touched && loginForm.controls['password'].hasError('required')">This field is required!</mat-error>
+            </mat-form-field>
+        </div>
+        <div *ngIf="!!showError">
+            <strong style="color: red">Bad Credentials! Either the email or password is incorrect!</strong>
+        </div>
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Login</button>
+    </form>
+
+</div>
+<div *ngIf="!!isRegisterActive">
+    <span>Already have an account? <a routerLink="/login" style="cursor:pointer">Login</a></span>
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName">
+                <mat-error *ngIf="registerForm.controls['firstName'].touched && registerForm.controls['firstName'].hasError('required')">This field is required!</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName">
+                <mat-error *ngIf="registerForm.controls['lastName'].touched && registerForm.controls['lastName'].hasError('required')">This field is required!</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="email">
+                <mat-error *ngIf="registerForm.controls['email'].touched && registerForm.controls['email'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="registerForm.controls['email'].hasError('pattern')">The email must be a valid format!</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username">
+                <mat-error *ngIf="registerForm.controls['username'].touched && registerForm.controls['username'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="registerForm.controls['username'].hasError('maxlength') || registerForm.controls['username'].hasError('minlength')">This field must be between 5 and 50 characters</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" [type]="!!showPassword ? 'text' : 'password'">
+                <mat-icon matSuffix (click)="showPassword = !showPassword">{{!!showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                <mat-error *ngIf="registerForm.controls['password'].touched && registerForm.controls['password'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="registerForm.controls['password'].hasError('maxlength') || registerForm.controls['password'].hasError('minlength')">This field must be between 8 and 20 characters</mat-error>
+                <mat-error *ngIf="registerForm.controls['password'].hasError('pattern')">The password must contain at least 1 capital letter, 1 small letter, 1 digit and 1 symbol!</mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput formControlName='confirmPassword' [errorStateMatcher]="errorMatcher" [type]="!!showConfirmedPassword ? 'text' :'password'">
+                <mat-icon matSuffix (click)="showConfirmedPassword = !showConfirmedPassword">{{!!showConfirmedPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                <mat-error *ngIf="registerForm.hasError('passwordsDoNotMatch')">Passwords do not match!</mat-error>
+                <mat-error *ngIf="registerForm.controls['confirmPassword'].touched && registerForm.controls['confirmPassword'].hasError('required')">This field is required!</mat-error>
+              </mat-form-field>
+        </div>
+
+        <div *ngIf="registerForm.invalid">
+            The form is invalid. Please fill the other fields as well!
+        </div>
+
+        <div class="state">
+            Do passwords match? 
+            <strong>{{!registerForm.hasError('passwordsDoNotMatch')}}</strong>
+          </div>
+        <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">Register</button>
+    </form>
+</div>
+<section class="error-box" *ngIf="isAnyError">
+    <p>{{ errors }}</p>
+</section>
+

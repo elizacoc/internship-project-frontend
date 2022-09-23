@@ -19,7 +19,7 @@ export class StockService {
   }
 
   getStockByProductPzn(pzn: string): Observable<Stock> {
-    return this._httpClient.get(`${this._baseurl}/products/${pzn}/stock`) as Observable<Stock>;
+    return this._httpClient.get(`${this._baseurl}/stocks/product/${pzn}`) as Observable<Stock>;
   }
 
   updateStock(stock: Stock): Observable<Stock> {

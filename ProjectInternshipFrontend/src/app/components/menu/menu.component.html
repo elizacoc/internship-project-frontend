@@ -1,7 +1,9 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!isLoginActive">
     <span class="spacer"></span>
         <a mat-list-item routerLink="/products">Products</a>
         <a mat-list-item routerLink="/stocks">Stocks</a>
-        <a mat-list-item>Account</a>
+        <a mat-list-item routerLink="/account">Account</a>
+        <a mat-list-item (click)="logout()" style="cursor:pointer">Logout</a>
 </mat-toolbar>
+
 

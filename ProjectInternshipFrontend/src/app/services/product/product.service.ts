@@ -8,8 +8,6 @@ export class ProductService {
 
   private readonly _baseurl = 'http://localhost:8081';
 
-  productPzn$: BehaviorSubject<string> = new BehaviorSubject('');
-
   constructor(private _httpClient: HttpClient) { }
 
   getAllProducts(): Observable<Product[]> {

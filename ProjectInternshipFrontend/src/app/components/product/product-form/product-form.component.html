@@ -4,46 +4,55 @@
             <mat-form-field appearance="outline">
                 <mat-label>Pzn</mat-label>
                 <input matInput placeholder="012345678" formControlName="pzn">
-                <mat-error *ngIf="productForm.controls['pzn'].invalid">{{getErrorMessagePzn()}}</mat-error>
+                <mat-error *ngIf="productForm.controls['pzn'].touched && productForm.controls['pzn'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="productForm.controls['pzn'].hasError('maxlength')">This field must be less than or equal to 8 characters long!</mat-error>
+                <mat-error *ngIf="productForm.controls['pzn'].hasError('pattern')">This field must contain only numbers</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>Supplier</mat-label>
                 <input matInput formControlName="supplier">
-                <mat-error *ngIf="productForm.controls['supplier'].invalid">{{getErrorMessageSupplier()}}</mat-error>
+                <mat-error *ngIf="productForm.controls['supplier'].hasError('maxlength')">This field must be less than 100 characters long!</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>Product Name</mat-label>
-                <input matInput formControlName="productName">
-                <mat-error *ngIf="productForm.controls['productName'].invalid">{{getErrorMessageProductName()}}</mat-error>
+                <input matInput formControlName="productName" oninput="this.value = this.value.toUpperCase()">
+                <mat-error *ngIf="productForm.controls['productName'].touched && productForm.controls['productName'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="productForm.controls['productName'].hasError('maxlength')">This field must be less than 100 characters long!</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>Strength</mat-label>
                 <input matInput formControlName="strength">
-                <mat-error *ngIf="productForm.controls['strength'].invalid">{{getErrorMessageStrength()}}</mat-error>
+                <mat-error *ngIf="productForm.controls['strength'].touched && productForm.controls['strength'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="productForm.controls['strength'].hasError('maxlength')">This field must be less than 100 characters long!</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>Package Size</mat-label>
                 <input matInput formControlName="packageSize">
-                <mat-error *ngIf="productForm.controls['packageSize'].invalid">{{getErrorMessagePackageSize()}}</mat-error>
+                <mat-error *ngIf="productForm.controls['packageSize'].touched && productForm.controls['packageSize'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="productForm.controls['packageSize'].hasError('maxlength')">This field must be less than 20 characters long!</mat-error>
             </mat-form-field>
         </div>
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>Unit</mat-label>
                 <mat-select formControlName="unit">
-                  <mat-option [value]="unit.key" *ngFor="let unit of unitOptions">{{unit.value}}</mat-option>
+                  <mat-option [value]="unit.value" *ngFor="let unit of unitOptions">{{unit.value}}</mat-option>
                 </mat-select>
-                <mat-error *ngIf="productForm.controls['unit'].invalid">{{getErrorMessageUnit()}}</mat-error>
-              </mat-form-field>
+                <mat-error *ngIf="productForm.controls['unit'].touched && productForm.controls['unit'].hasError('required')">This field is required!</mat-error>
+                <mat-error *ngIf="productForm.controls['unit'].hasError('maxlength')">This field must be less than 2 characters long!</mat-error>  
+            </mat-form-field>
         </div>
     </div>
-    <button mat-raised-button color="primary" type="submit">Add product</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid">Add product</button>
 </form>
+<section class="error-box" *ngIf="isAnyError">
+    <p>{{ errors }}</p>
+</section>
