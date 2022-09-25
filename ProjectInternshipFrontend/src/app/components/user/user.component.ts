@@ -1,8 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { CrossFieldErrorMatcher } from 'src/app/error/CrossFieldErrorMatcher';
 import { User } from 'src/app/models/user.model';
 import { LoginService } from 'src/app/services/login/login.service';
@@ -12,14 +14,13 @@ import { LoginService } from 'src/app/services/login/login.service';
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
   
   errorMatcher = new CrossFieldErrorMatcher();
 
   showPassword: boolean = false;
   showConfirmedPassword: boolean = false;
 
-  isAnyError: boolean = false;
   errors: string[] = [];
   
   updateUserForm!: FormGroup;
@@ -31,23 +32,33 @@ export class UserComponent implements OnInit {
     username: "",
     email: "",
     creationDate: ""
-  }
+  };
 
-  userDetailsDataSource: User[] = [this.userDetails]
+  private _subscriptionList: Subscription[] = [];
 
-  dataSource: MatTableDataSource<User> = new MatTableDataSource<User>(this.userDetailsDataSource)
-  displayedColumns : string[] = ['firstName', 'lastName', 'username', 'email', 'creationDate']
+  userDetailsDataSource: User[] = [this.userDetails];
 
-  constructor(private _formBuilder: FormBuilder, private _loginService: LoginService, private _router: Router) { 
+  dataSource: MatTableDataSource<User> = new MatTableDataSource<User>(this.userDetailsDataSource);
+  displayedColumns : string[] = ['firstName', 'lastName', 'username', 'email', 'creationDate'];
+
+  constructor(
+    private _formBuilder: FormBuilder, 
+    private _loginService: LoginService, 
+    private _router: Router, 
+    private _snackBar: MatSnackBar) { 
     this.createAccountForm();
   }
 
   ngOnInit(): void {
-    this.userDetails.firstName = localStorage.getItem('firstName') as string
-    this.userDetails.lastName = localStorage.getItem('lastName') as string
-    this.userDetails.email = localStorage.getItem('email') as string
-    this.userDetails.username = localStorage.getItem('username') as string
-    this.userDetails.creationDate = localStorage.getItem('creationDate') as string
+    this.userDetails.firstName = localStorage.getItem('firstName') as string;
+    this.userDetails.lastName = localStorage.getItem('lastName') as string;
+    this.userDetails.email = localStorage.getItem('email') as string;
+    this.userDetails.username = localStorage.getItem('username') as string;
+    this.userDetails.creationDate = localStorage.getItem('creationDate') as string;
+  }
+
+  ngOnDestroy(): void {
+    this._subscriptionList.forEach((subscription) => subscription.unsubscribe());
   }
 
   createAccountForm(){
@@ -63,40 +74,36 @@ export class UserComponent implements OnInit {
   }
 
   updateAccount(){
-    this.isAnyError = false;
     this.errors = [];
     const userToPersist: User = {
       email: localStorage.getItem('email'),
       ...this.updateUserForm.getRawValue()
     }
+    this._subscriptionList.push(
     this._loginService.updateUser(userToPersist).subscribe({
-      next :(user: User) =>{
-      console.log(user)
-      // if(!user.password){
-      //   window.location.reload()
-      // } else {
-      //   this._loginService.logoutUser().subscribe(() => {
-      //   localStorage.clear()
-      //   console.log('Logout Success!');
-      //   this._router.navigate(['/']);
-      //   },
-      //   () => {
-      //   this._router.navigate(['/']);
-      //   });
-      // }
-      
+      next :(user: User) => {
+        console.log('Success! The updated user is: ', user)
+        localStorage.setItem('firstName', user.firstName!)
+        localStorage.setItem('lastName', user.lastName!)
+        localStorage.setItem('username', user.username!)
+        window.location.reload()
       },
       error: (error: HttpErrorResponse) => {
         console.error('You cannot update the account because: ', error.error)
-        this.isAnyError = true;
         this.errors.push(error.error.concat('\n'));
+        this.errors.forEach((error) => {this.openSnackBar(error)})
       }
     })
+    )
+  }
+
+  resetForm(){
+    this.updateUserForm.reset();
   }
 
   toggleUserUpdate(){
     this.toggleUserUpdateForm = !this.toggleUserUpdateForm;
-    this.updateUserForm.patchValue(this.userDetails)
+    this.updateUserForm.patchValue(this.userDetails);
   }
 
   passwordValidator(form: FormGroup) {
@@ -105,5 +112,11 @@ export class UserComponent implements OnInit {
     return condition ? { passwordsDoNotMatch: true} : null;
   }
 
-
+  openSnackBar(error: string){
+    this._snackBar.open(error, 'Okay', {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 10 * 1000
+    })
+  }
 }

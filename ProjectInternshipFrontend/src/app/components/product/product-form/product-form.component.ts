@@ -1,7 +1,8 @@
 import { HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, Params } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router, Params, TitleStrategy } from '@angular/router';
 import { Subscription, take } from 'rxjs';
 import { Unit } from 'src/app/enums/unit.enum';
 import { Product } from 'src/app/models/product.model';
@@ -16,11 +17,10 @@ import { StockService } from 'src/app/services/stock/stock.service';
 })
 export class ProductFormComponent implements OnInit, OnDestroy {
 
-  public isAnyError: boolean = false;
-  public errors: String[] = [];
+  public errors: string[] = [];
 
   private _subscriptionList: Subscription[] = [];
-  private _selectedProduct?: Product;
+  selectedProduct?: Product;
 
   unitOptions = Object.entries(Unit).map(([key, value]) => ({key, value}));
   productForm!: FormGroup;
@@ -30,13 +30,19 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     private _productService: ProductService,
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
-    private _stockService: StockService
+    private _stockService: StockService,
+    private _snackBar: MatSnackBar
   ) {
     this._createForm();
+    
    }
 
   ngOnInit(): void {
-    this._getPznFromLink();
+    const url = this._activatedRoute.snapshot.routeConfig
+    if(url?.path?.includes('update')){
+      this._getPznFromLink();
+    }
+    
   }
 
   private _createForm() {
@@ -55,58 +61,101 @@ export class ProductFormComponent implements OnInit, OnDestroy {
       this._activatedRoute.params.pipe(
         take(1)
       ).subscribe({
-       next: (params: Params) => this._getProductByPzn(params['pzn']),
-       error: (error: HttpErrorResponse) => alert(error.error)
+       next: (params: Params) => {
+        console.log('Get parameter success!');
+        this._getProductByPzn(params['pzn']);
+      },
+       error: () => console.error('Failed to get the parameter! ')
       })
     )
   }
 
   private _getProductByPzn(pzn: string) {
+    this._subscriptionList.push(
     this._productService.getProductByPzn(pzn).pipe(
       take(1)
     ).subscribe({
       next: (product: Product) => {
+        console.log('Get product for update success!');
         this.productForm.patchValue(product);
-        this._selectedProduct = product;
+        this.selectedProduct = product;
       },
-      error: (error: HttpErrorResponse) => alert(error.error)
-    });
+      error: (error: HttpErrorResponse) => console.error('Could not get the product! ', error.error)
+    })
+    )
   }
 
   private _updateProduct(product: Product){
+    this._subscriptionList.push(
     this._productService.updateProduct(product).subscribe({
-      next: (product: Product) => this._router.navigateByUrl('/products'),
-      error: (error: HttpErrorResponse) => console.error('You cannot update the product because: ', error.error)
+      next: (product: Product) => {
+        console.log('Product updated with success: ', product);
+        this._router.navigateByUrl('/products');
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('You cannot update the product because: ', error.error);
+        this.errors.push(error.error.concat('\n'));
+        this.errors.forEach((error) => {this.openSnackBar(error)});
+      }
     })
+    )
   }
 
   private _createProduct(product: Product){
+    this._subscriptionList.push(
     this._productService.createProduct(product).subscribe({
       next: (product: Product) => {
+        console.log('Product created with success: ', product);
         this.getStockIdForProduct(product.pzn);
       },
       error: (error: HttpErrorResponse) => {
-        console.error('You cannot add the new product because: ', error.error)
+        console.error('You cannot add the new product because: ', error.error);
         this.errors.push(error.error.concat('\n'));
-        this.isAnyError = true;
+        this.errors.forEach((error) => {this.openSnackBar(error)})
       }
     })
+    )
   }
 
   submitProductForm(){
     this.errors = [];
-    this.isAnyError = false;
     const productToPersist: Product = {
-      pzn: this._selectedProduct?.pzn ?? this.productForm.controls['pzn'].getRawValue(),
+      pzn: this.selectedProduct?.pzn ?? this.productForm.controls['pzn'].getRawValue(),
       ...this.productForm.getRawValue()
     };
 
-    !!this._selectedProduct ? this._updateProduct(productToPersist) : this._createProduct(productToPersist)
+    !!this.selectedProduct ? this._updateProduct(productToPersist) : this._createProduct(productToPersist)
+  }
+
+  resetForm(){
+    if(!!this.selectedProduct){
+      this.productForm.reset();
+      this.productForm.controls['pzn'].setValue(this.selectedProduct.pzn);
+    }
+    else {
+      this.productForm.reset();
+    }
   }
 
   getStockIdForProduct(pzn: string){
-    this._stockService.getStockByProductPzn(pzn).subscribe((stock: Stock) => {
-      this._router.navigate([`/stocks/update/${stock.id}`])
+    this._subscriptionList.push(
+    this._stockService.getStockByProductPzn(pzn).subscribe({
+      next: (stock: Stock) => {
+        console.log('Get stock success for created product: ', stock);
+        this._router.navigate([`/stocks/update/${stock.id}`])
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Could not get stock! ', error.error);
+      }
+    })
+    )
+  }
+
+  openSnackBar(error: string){
+    this._snackBar.open(error, 'Okay', {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 10 * 1000
     })
   }
 

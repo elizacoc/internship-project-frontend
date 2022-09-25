@@ -12,8 +12,18 @@ export class LoginService {
   private readonly _baseurl = 'http://localhost:8081';
 
   isAuthenticated() {
+    const time = new Date();
       if(localStorage.getItem('authenticationToken') !== null){
-      return true;
+        const token = JSON.parse(localStorage.getItem('authenticationToken')!);
+        if(token.expiry < time.getTime()){
+          localStorage.removeItem('authenticationToken');
+          //delete all local storage and logout
+          return false;
+        }
+        else {
+          return true;
+        }
+      
     }
       return false;
   }

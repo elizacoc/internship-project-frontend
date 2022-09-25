@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { StockService } from 'src/app/services/stock/stock.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-stock-table',
@@ -16,22 +17,28 @@ export class StockTableComponent implements OnInit, OnDestroy {
 
   stockList: Stock[] = [];
   dataSource: MatTableDataSource<Stock> = new MatTableDataSource<Stock>(this.stockList);
-  displayedColumns: string[] = ['id', 'quantity', 'price', 'product', 'update']
+  displayedColumns: string[] = ['id', 'quantity', 'price', 'product', 'update'];
 
   constructor(private _stockService: StockService, private _router: Router) { }
 
   ngOnInit(): void {
     this._subscriptionList.push(
-      this._stockService.getAllStocks().subscribe((stocks: Stock[]) => {
-        this.stockList = stocks
-        this.dataSource = new MatTableDataSource<Stock>(this.stockList)
+      this._stockService.getAllStocks().subscribe({ 
+        next: (stocks: Stock[]) => {
+          console.log('Success! These are the stocks: ', stocks);
+          this.stockList = stocks;
+          this.dataSource = new MatTableDataSource<Stock>(this.stockList);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Failed to get all stocks! ', error.error);
+        }
       })
     )
   }
 
   updateStock(stock: Stock) {
-      console.log('This is the stock to be updated: ', stock)
-      this._router.navigate([`/stocks/update/${stock.id}`])
+      console.log('This is the stock to be updated: ', stock);
+      this._router.navigate([`/stocks/update/${stock.id}`]);
   }
 
   applyFilter(event: Event) {

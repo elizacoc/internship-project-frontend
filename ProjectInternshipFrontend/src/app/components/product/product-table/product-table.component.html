@@ -48,13 +48,11 @@
 
       <ng-container matColumnDef="stockPrice">
         <th mat-header-cell *matHeaderCellDef> Price </th>
-        <!-- <td mat-cell *matCellDef="let product"> {{!!toggleButton ? product.stock?.price : undefined}}</td> -->
         <td mat-cell *matCellDef="let product"> {{product.stock?.price | currency: 'EUR'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="stockQuantity">
         <th mat-header-cell *matHeaderCellDef> Quantity </th>
-        <!-- <td mat-cell *matCellDef="let product">{{!!toggleButton ? product.stock?.quantity : undefined}}</td> -->
         <td mat-cell *matCellDef="let product">{{product.stock?.quantity}}</td>
       </ng-container>
 
@@ -114,28 +112,3 @@
                    aria-label="Select page of products">
     </mat-paginator>
   </div>
-
-<!-- <button type="button" (click)="createProduct()">Add product</button>
-<table>
-    <tr>
-        <th>Pzn</th>
-        <th>Supplier</th>
-        <th>Product Name</th>
-        <th>Strength</th>
-        <th>Package Size</th>
-        <th>Unit</th>
-        <th>Options</th>
-    </tr>
-    <tr *ngFor="let product of productList">
-        <td>{{product.pzn}}</td>
-        <td>{{product.supplier}}</td>
-        <td>{{product.productName}}</td>
-        <td>{{product.strength}}</td>
-        <td>{{product.packageSize}}</td>
-        <td>{{product.unit}}</td>
-        <td>
-            <button type = "button" (click)="updateProduct(product)">Update product</button>
-            <button type = "button" (click)="deleteProduct(product)">Delete product</button>
-        </td>
-    </tr>
-</table> -->

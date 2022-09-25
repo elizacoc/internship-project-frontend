@@ -4,22 +4,23 @@ import { LoginService } from 'src/app/services/login/login.service';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { User } from 'src/app/models/user.model';
-import { tap } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { CrossFieldErrorMatcher } from 'src/app/error/CrossFieldErrorMatcher';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NodeWithI18n } from '@angular/compiler';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit, OnDestroy{
 
   errorMatcher = new CrossFieldErrorMatcher();
   showPassword: boolean = false;
   showConfirmedPassword: boolean = false;
-  submitted: boolean = true;
-  isAnyError: boolean = false;
-  errors: string[] = []
+  
+  errors: string[] = [];
 
   showError: boolean = false;
   isRegisterActive: boolean = true;
@@ -27,7 +28,15 @@ export class LoginComponent implements OnInit{
   loginForm!: FormGroup;
   registerForm!: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder, private _loginService: LoginService, private _router: Router, private _activatedRoute: ActivatedRoute) {
+  private _subscriptionList: Subscription[] = [];
+
+  constructor(
+    private _formBuilder: FormBuilder, 
+    private _loginService: LoginService, 
+    private _router: Router, 
+    private _activatedRoute: ActivatedRoute, 
+    private _snackBar: MatSnackBar
+    ) {
     this.createForm();
     this.createRegisterForm();
     this.verifyActivatedRoute();
@@ -38,6 +47,10 @@ export class LoginComponent implements OnInit{
     if(localStorage.getItem('authenticationToken') !== null){
       this._router.navigate(['/products'])
     }
+  }
+
+  ngOnDestroy(): void {
+    this._subscriptionList.forEach((subscription: Subscription) => subscription.unsubscribe());
   }
 
   createForm(){
@@ -65,58 +78,75 @@ export class LoginComponent implements OnInit{
     formData.append('username', this.loginForm.controls['email'].getRawValue().toString());
     formData.append('password', this.loginForm.controls['password'].getRawValue().toString());
 
+    this._subscriptionList.push(
     this._loginService.loginUser(formData).pipe(tap((response: HttpResponse<string>) => {if(response.ok){
     }})).subscribe({
       next: (response: HttpResponse<string>) => {
-        this._loginService.getUser(this.loginForm.controls['email'].getRawValue().toString()).subscribe((user: User) =>{
-        localStorage.setItem('firstName', user.firstName!);
-        localStorage.setItem('lastName', user.lastName!);
-        localStorage.setItem('username', user.username!);
-        localStorage.setItem('email', user.email!);
-        localStorage.setItem('creationDate', user.creationDate!);
-      })
-      console.log("Login Succes!");
-      localStorage.setItem('authenticationToken', 'true')
-      this._router.navigate(['/products']);
-      this.showError = false;
+        this._loginService.getUser(this.loginForm.controls['email'].getRawValue().toString()).subscribe({
+          next: (user: User) =>{
+          localStorage.setItem('firstName', user.firstName!);
+          localStorage.setItem('lastName', user.lastName!);
+          localStorage.setItem('username', user.username!);
+          localStorage.setItem('email', user.email!);
+          localStorage.setItem('creationDate', user.creationDate!);
+          console.log('Get user success: ', user);
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error('User not found!');
+          }
+        })
+        console.log("Login Success!");
+        const token = {
+          value: 'true',
+          expiry: new Date().getTime() + (300 * 1000)
+        }
+        // localStorage.setItem('authenticationToken', 'true');
+        localStorage.setItem('authenticationToken', JSON.stringify(token))
+        this.showError = false;
+        this._router.navigate(['/products']);
       },
       error: (error: HttpErrorResponse) => {
-        localStorage.clear()
-        this.showError = true
-        console.log(error.error)
+        localStorage.clear();
+        this.loginForm.reset();
+        this.showError = true;
+        console.error('Unauthorized user!');
       }
-    });
+    })
+    )
   }
 
   register(){
-    this.submitted = true;
-    this.isAnyError = false;
     this.errors = [];
     const registeredUser: User = {
       ...this.registerForm.getRawValue()
-    }
+    };
+    this._subscriptionList.push(
     this._loginService.registerUser(registeredUser).subscribe({
       next: (user: User) => {
-        console.log(user)
-        this.registerForm.reset();
-        this._router.navigate(['/login'])
+        console.log('User registered with success: ', user);
+        this._router.navigate(['/login']);
       },
       error: (error: HttpErrorResponse) => {
-        this.isAnyError = true
-        this.errors.push(error.error.concat('\n'))
+        console.error('User failed to register because: ', error.error);
+        this.errors.push(error.error.concat('\n'));
+        this.errors.forEach((error) => {this.openSnackBar(error)});
       }
     })
-    
+    )
+  }
+
+  reset(){
+    this.registerForm.reset();
   }
 
   verifyActivatedRoute(){
     const url = this._activatedRoute.snapshot.routeConfig?.path
     if(url?.includes('login'))
     {
-      this.isRegisterActive = false
+      this.isRegisterActive = false;
     }
     else{
-      this.isRegisterActive = true
+      this.isRegisterActive = true;
     }
   }
 
@@ -124,6 +154,14 @@ export class LoginComponent implements OnInit{
     const condition = form.get('password')?.value !== form.get('confirmPassword')?.value;
 
     return condition ? { passwordsDoNotMatch: true} : null;
+  }
+
+  openSnackBar(errorMessage: string) {
+    this._snackBar.open(errorMessage, 'Okay', {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 10 * 1000
+    });
   }
   
 }

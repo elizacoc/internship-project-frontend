@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Stock } from 'src/app/models/stock.model';
 import { StockService } from 'src/app/services/stock/stock.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-product-table',
@@ -21,8 +22,6 @@ export class ProductTableComponent implements OnInit, OnDestroy{
   subscriptionList: Subscription[] = [];
   productDeleted!: Product;
 
-  toggleButton: boolean = false;
-
   displayedColumns: string[] = ['pzn', 'supplier', 'productName', 'strength', 'packageSize', 'unit', 'stockPrice','stockQuantity', 'edit', 'delete', 'getStock', 'editStock'];
   dataSource = new MatTableDataSource<Product>(this.productList);
 
@@ -30,15 +29,17 @@ export class ProductTableComponent implements OnInit, OnDestroy{
 
   ngOnInit(): void {
     this.subscriptionList.push(
-      this._productService.getAllProducts().subscribe((products: Product[]) => {
-        console.log('These are the products:', products);
+      this._productService.getAllProducts().subscribe({
+        next: (products: Product[]) => {
+        console.log('Succes! These are the products: ', products);
         this.productList = products;
         this.dataSource = new MatTableDataSource<Product>(this.productList);
         this.dataSource.paginator = this.paginator;
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Failed to get all the products!', error.error);
+        }
       })
-
-      
-     
     );
   }
 
@@ -51,33 +52,49 @@ export class ProductTableComponent implements OnInit, OnDestroy{
   }
 
   deleteProduct(product: Product){
-    this._productService.deleteProduct(product.pzn).subscribe(() => {
-      console.log('The product: ', product, ' was deleted');
-      this.productList = this.productList.filter(
-        (productInList: Product) => productInList.pzn !== product.pzn
-      )
-      this.dataSource = new MatTableDataSource<Product>(this.productList);
-      this.dataSource.paginator = this.paginator;
+    this.subscriptionList.push(
+    this._productService.deleteProduct(product.pzn).subscribe({
+      next: () => {
+        console.log('Success! The product: ', product, ' was deleted');
+        this.productList = this.productList.filter(
+          (productInList: Product) => productInList.pzn !== product.pzn
+        );
+        this.dataSource = new MatTableDataSource<Product>(this.productList);
+        this.dataSource.paginator = this.paginator;
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('You could not delete the product! ', error.error);
+      }
     })
+    )
   }
 
   getStock(pzn: string){
     this.subscriptionList.push(
-      this._stockService.getStockByProductPzn(pzn).subscribe((stock: Stock) => {
-      console.log('The stock for the product is: ', stock);
-      const index = this.productList.findIndex((product) => product.pzn === pzn);
-      this.productList[index].stock = stock;
-      console.log('Product that I just got the stock ', this.productList[index])
-      this.toggleButton = !this.toggleButton
-    })
+      this._stockService.getStockByProductPzn(pzn).subscribe({
+        next: (stock: Stock) => {
+          console.log('Success! The stock for the product is: ', stock);
+          const index = this.productList.findIndex((product) => product.pzn === pzn);
+          this.productList[index].stock = stock;
+          console.log('Product that I just got the stock for ', this.productList[index]);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Failed to get stock for product!', error.error);
+        }
+      })
     )
-    this.toggleButton = !this.toggleButton
   }
 
   editStock(pzn: string){
     this.subscriptionList.push(
-      this._stockService.getStockByProductPzn(pzn).subscribe((stock: Stock) => {
-        this._router.navigate([`/stocks/update/${stock.id}`])
+      this._stockService.getStockByProductPzn(pzn).subscribe({
+        next: (stock: Stock) => {
+          console.log('Success getting the stock id ', stock.id);
+          this._router.navigate([`/stocks/update/${stock.id}`]);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Failed to get the stock id! ', error.error);
+        }
       })
     )
   }

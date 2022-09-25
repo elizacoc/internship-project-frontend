@@ -73,7 +73,7 @@
 
 <button mat-raised-button (click)="toggleUserUpdate()">Update account details</button>
 <div *ngIf="!!toggleUserUpdateForm">
-    <form [formGroup]="updateUserForm" (ngSubmit)="updateAccount()">
+    <form [formGroup]="updateUserForm" (ngSubmit)="updateAccount()" (ngReset)="resetForm()">
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>First Name</mat-label>
@@ -115,11 +115,7 @@
             <mat-error *ngIf="updateUserForm.controls['confirmPassword'].touched && updateUserForm.controls['confirmPassword'].hasError('required')">This field is required!</mat-error>
           </mat-form-field>
     </div>
-    <button mat-raised-button color="primary" type="submit" [disabled]="updateUserForm.invalid">updateAccount</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="updateUserForm.invalid">Update Account</button>
+    <button mat-raised-button color="warn" type="reset">Reset fields</button>
     </form>
 </div>
-
-<section class="error-box" *ngIf="isAnyError">
-    <p>{{ errors }}</p>
-</section>
-

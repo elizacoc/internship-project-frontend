@@ -3,7 +3,7 @@
         <div>
             <mat-form-field appearance="outline">
                 <mat-label>Pzn</mat-label>
-                <input matInput placeholder="012345678" formControlName="pzn">
+                <input matInput placeholder="012345678" formControlName="pzn" [readonly]="!!selectedProduct">
                 <mat-error *ngIf="productForm.controls['pzn'].touched && productForm.controls['pzn'].hasError('required')">This field is required!</mat-error>
                 <mat-error *ngIf="productForm.controls['pzn'].hasError('maxlength')">This field must be less than or equal to 8 characters long!</mat-error>
                 <mat-error *ngIf="productForm.controls['pzn'].hasError('pattern')">This field must contain only numbers</mat-error>
@@ -51,8 +51,6 @@
             </mat-form-field>
         </div>
     </div>
-    <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid">Add product</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid">{{!selectedProduct ? 'Add product' : 'Update product'}}</button>
+    <button mat-raised-button color="warn" type="button" (click)="resetForm()">Reset</button>
 </form>
-<section class="error-box" *ngIf="isAnyError">
-    <p>{{ errors }}</p>
-</section>
