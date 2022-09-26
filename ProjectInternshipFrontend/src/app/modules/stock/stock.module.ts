@@ -12,6 +12,7 @@ import { StockTableComponent } from 'src/app/components/stock/stock-table/stock-
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import localeDE  from '@angular/common/locales/de';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 registerLocaleData(localeDE)
 
@@ -28,7 +29,8 @@ registerLocaleData(localeDE)
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatIconModule
+    MatIconModule,
+    MatPaginatorModule
   ],
   providers: [
     StockService,

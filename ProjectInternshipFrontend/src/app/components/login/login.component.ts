@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit, OnDestroy{
   errors: string[] = [];
 
   showError: boolean = false;
-  isRegisterActive: boolean = true;
+  isRegisterActive: boolean = false;
 
   loginForm!: FormGroup;
   registerForm!: FormGroup;
@@ -39,7 +39,6 @@ export class LoginComponent implements OnInit, OnDestroy{
     ) {
     this.createForm();
     this.createRegisterForm();
-    this.verifyActivatedRoute();
    }
   
 
@@ -98,7 +97,7 @@ export class LoginComponent implements OnInit, OnDestroy{
         console.log("Login Success!");
         const token = {
           value: 'true',
-          expiry: new Date().getTime() + (300 * 1000)
+          expiry: new Date().getTime() + (30000 * 1000)
         }
         // localStorage.setItem('authenticationToken', 'true');
         localStorage.setItem('authenticationToken', JSON.stringify(token))
@@ -124,7 +123,7 @@ export class LoginComponent implements OnInit, OnDestroy{
     this._loginService.registerUser(registeredUser).subscribe({
       next: (user: User) => {
         console.log('User registered with success: ', user);
-        this._router.navigate(['/login']);
+        this.isRegisterActive = false
       },
       error: (error: HttpErrorResponse) => {
         console.error('User failed to register because: ', error.error);
@@ -139,17 +138,6 @@ export class LoginComponent implements OnInit, OnDestroy{
     this.registerForm.reset();
   }
 
-  verifyActivatedRoute(){
-    const url = this._activatedRoute.snapshot.routeConfig?.path
-    if(url?.includes('login'))
-    {
-      this.isRegisterActive = false;
-    }
-    else{
-      this.isRegisterActive = true;
-    }
-  }
-
   passwordValidator(form: FormGroup) {
     const condition = form.get('password')?.value !== form.get('confirmPassword')?.value;
 
@@ -162,6 +150,10 @@ export class LoginComponent implements OnInit, OnDestroy{
       verticalPosition: 'top',
       duration: 10 * 1000
     });
+  }
+
+  apply(value:string){
+    this.isRegisterActive = value == "login"? false : true;
   }
   
 }

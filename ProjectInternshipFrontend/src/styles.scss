@@ -1,14 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-form {
-    text-align: center;
-  }
 
-  .error-box {
-    color: red;
-    margin-inline-start: 10px;
-    margin-block: 10px;
-    font-size: 16;
+html, body { height: 100%; }
+body { 
+  margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; 
+  background-image: linear-gradient(to right, rgba(251,194,235,1), rgba(179,202,243,1));
+}
+
+body {
+  padding-bottom: 10rem;
 }

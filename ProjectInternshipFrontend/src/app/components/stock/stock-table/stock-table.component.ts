@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Stock } from 'src/app/models/stock.model';
 import { Subscription } from 'rxjs';
 import { StockService } from 'src/app/services/stock/stock.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-stock-table',
@@ -13,6 +14,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class StockTableComponent implements OnInit, OnDestroy {
   
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   private _subscriptionList: Subscription[] = [];
 
   stockList: Stock[] = [];
@@ -28,6 +31,7 @@ export class StockTableComponent implements OnInit, OnDestroy {
           console.log('Success! These are the stocks: ', stocks);
           this.stockList = stocks;
           this.dataSource = new MatTableDataSource<Stock>(this.stockList);
+          this.dataSource.paginator = this.paginator;
         },
         error: (error: HttpErrorResponse) => {
           console.error('Failed to get all stocks! ', error.error);

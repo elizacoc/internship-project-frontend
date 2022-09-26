@@ -20,6 +20,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { MatCardModule } from '@angular/material/card';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,7 +46,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FormsModule,
     MatIconModule,
     MatTableModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+
+    MatCardModule,
   ],
   providers: [interceptorProviders],
   bootstrap: [AppComponent]

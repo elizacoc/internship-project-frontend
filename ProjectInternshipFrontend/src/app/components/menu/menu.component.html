@@ -1,9 +1,11 @@
 <mat-toolbar *ngIf="!isLoginActive">
+    <mat-icon matPrefix>healing</mat-icon>
+    <span>Kronsoft Internship Application</span>
     <span class="spacer"></span>
-        <a mat-list-item routerLink="/products">Products</a>
-        <a mat-list-item routerLink="/stocks">Stocks</a>
-        <a mat-list-item routerLink="/account">Account</a>
-        <a mat-list-item (click)="logout()" style="cursor:pointer">Logout</a>
+    <button mat-button routerLink="/products"><span><img src="../../../assets/icons8-pill-32.png"></span>Products</button>
+    <button mat-button routerLink="/stocks"><span><img src="../../../assets/icons8-new-product-32.png"></span>Stocks</button>
+    <button mat-button routerLink="/account"><span><img src="../../../assets/icons8-account-32.png"></span>Account</button>
+    <button mat-button (click)="logout()"><span><img src="../../../assets/icons8-logout-32.png"></span>Logout</button>
 </mat-toolbar>
 
 

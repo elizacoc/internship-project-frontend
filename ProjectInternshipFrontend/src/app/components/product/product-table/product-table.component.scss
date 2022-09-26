@@ -1,5 +1,35 @@
-table {
-  width: 100%;
+table.mat-table {
+  background-color:  rgb(255,255,255,0.1);
+}
+
+mat-paginator {
+  background-color:  rgb(255,255,255,0.1);
+}
+
+.container {
+  width: 75%;
+  margin: auto;
+  margin-top: 5rem;
+  padding: 10px;
+  background-color: rgb(255,255,255,0.4);
+  box-shadow: 5px 3px 10px 5px gray;
+  display: flex;
+  flex-direction: column;
+}
+
+.container > .product-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.product-container > .table-container{
+  flex-grow: 1;
+}
+
+.table-container{
+  display: flex;
+  flex-direction: column;
 }
 
 .mat-form-field {
@@ -16,3 +46,7 @@ table {
 .mat-row:hover .mat-cell {
     border-color: currentColor;
   }
+
+  :host::ng-deep .mat-form-field-prefix{
+    position: initial;
+}

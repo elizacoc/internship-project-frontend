@@ -2,8 +2,16 @@
     flex: 1 1 auto;
 }
 
+mat-toolbar {
+    background-image: linear-gradient(to left, rgba(251,194,235,1), rgba(179,202,243,1));
+}
+
 mat-toolbar a{
     display: inline-block;
     margin: 0 10px;
     text-decoration: none;
+}
+
+button {
+    font-size: large;
 }

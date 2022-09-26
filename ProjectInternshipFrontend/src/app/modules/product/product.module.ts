@@ -14,6 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import { StockService } from 'src/app/services/stock/stock.service';
 import { MatSelectModule } from '@angular/material/select';
 import localeDE  from '@angular/common/locales/de';
+import {MatGridListModule} from '@angular/material/grid-list';
+
 
 registerLocaleData(localeDE)
 
@@ -33,7 +35,8 @@ registerLocaleData(localeDE)
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatGridListModule
   ],
   providers: [
     ProductService,

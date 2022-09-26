@@ -1,12 +1,15 @@
-<div>
+<div class="container">
   <mat-form-field appearance="standard">
+    <mat-icon matPrefix>search</mat-icon>
     <mat-label>Filter</mat-label>
     <input matInput (keyup)="applyFilter($event)" #input>
   </mat-form-field>
-</div>
-<div class="mat-elevation-z8">
+
+<div class="stock-container">
+  <div class="table-container">
     <table mat-table [dataSource]="dataSource">
 
+      
       <!-- Id Column -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef> Id </th>
@@ -47,4 +50,8 @@
       </tr>
 
     </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of products">
+    </mat-paginator>
+  </div>
+</div>
 </div>
