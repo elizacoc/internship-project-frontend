@@ -15,7 +15,7 @@ import { StockService } from 'src/app/services/stock/stock.service';
 import { MatSelectModule } from '@angular/material/select';
 import localeDE  from '@angular/common/locales/de';
 import {MatGridListModule} from '@angular/material/grid-list';
-
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 registerLocaleData(localeDE)
 
@@ -36,7 +36,8 @@ registerLocaleData(localeDE)
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatGridListModule
+    MatGridListModule,
+    MatAutocompleteModule
   ],
   providers: [
     ProductService,

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, TitleStrategy } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { map, Observable, startWith, Subscription } from 'rxjs';
 import { Product } from 'src/app/models/product.model';
 import { ProductService } from 'src/app/services/product/product.service';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Stock } from 'src/app/models/stock.model';
 import { StockService } from 'src/app/services/stock/stock.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-product-table',
@@ -22,8 +23,12 @@ export class ProductTableComponent implements OnInit, OnDestroy{
   subscriptionList: Subscription[] = [];
   productDeleted!: Product;
 
+  myControl = new FormControl('');
+
   displayedColumns: string[] = ['pzn', 'supplier', 'productName', 'strength', 'packageSize', 'unit', 'stockPrice','stockQuantity', 'edit', 'delete', 'getStock', 'editStock'];
   dataSource = new MatTableDataSource<Product>(this.productList);
+  options: string[] = [];
+  filteredOptions!: Observable<string[]>;
 
   constructor(private _productService: ProductService, private _stockService: StockService, private _router: Router) { }
 
@@ -35,11 +40,16 @@ export class ProductTableComponent implements OnInit, OnDestroy{
         this.productList = products;
         this.dataSource = new MatTableDataSource<Product>(this.productList);
         this.dataSource.paginator = this.paginator;
+        products.forEach((product) => {this.options.push(product.productName)})
         },
         error: (error: HttpErrorResponse) => {
           console.error('Failed to get all the products!', error.error);
         }
       })
+    );
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || '')),
     );
   }
 
@@ -102,6 +112,12 @@ export class ProductTableComponent implements OnInit, OnDestroy{
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
   
   ngOnDestroy(): void {
