@@ -40,7 +40,11 @@ export class ProductTableComponent implements OnInit, OnDestroy{
         this.productList = products;
         this.dataSource = new MatTableDataSource<Product>(this.productList);
         this.dataSource.paginator = this.paginator;
-        products.forEach((product) => {this.options.push(product.productName)})
+        products.forEach((product) => {
+          if(this.options.includes(product.productName) === false){
+            this.options.push(product.productName)
+          }
+          })
         },
         error: (error: HttpErrorResponse) => {
           console.error('Failed to get all the products!', error.error);
@@ -71,6 +75,8 @@ export class ProductTableComponent implements OnInit, OnDestroy{
         );
         this.dataSource = new MatTableDataSource<Product>(this.productList);
         this.dataSource.paginator = this.paginator;
+        this.options = [];
+        this.productList.forEach((product) => {this.options.push(product.productName)});
       },
       error: (error: HttpErrorResponse) => {
         console.error('You could not delete the product! ', error.error);

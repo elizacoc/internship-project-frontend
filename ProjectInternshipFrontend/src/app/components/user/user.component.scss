@@ -41,7 +41,6 @@ table.mat-table {
   font-size: 14px;
   width: 100%;
   margin-top: 10px;
-  // margin: 10px 2px 5px 10px;
 }
   
 .mat-row .mat-cell {
@@ -58,4 +57,39 @@ button {
   width: 100%;
   margin-top: 10px;
   margin-bottom: 10px; 
+}
+
+@media only screen and (max-width: 810px) {
+  .container {
+    width: 60%;
+    overflow: auto;
+  }
+
+  h1 {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+  }
+
+
+  .sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+  }
+
+  .container > .form-container {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+  }
+
+  td.mat-cell {
+    padding: 0px 10px;
+    
+  }
+
+  th.mat-header-cell {
+    padding: 0px 10px;
+  }
 }

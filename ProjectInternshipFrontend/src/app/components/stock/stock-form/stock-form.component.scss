@@ -48,3 +48,12 @@ div > mat-form-field {
     margin-top: 10px;
 }
  
+
+@media only screen and (max-width: 1300px) {
+    /* For mobile phones: */
+
+    .container {
+        margin-top: 1rem;
+        width: 60%;
+    }
+}

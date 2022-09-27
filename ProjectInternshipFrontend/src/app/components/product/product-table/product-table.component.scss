@@ -1,9 +1,16 @@
 table.mat-table {
+  width: 100%;
   background-color:  rgb(255,255,255,0.1);
 }
 
 mat-paginator {
   background-color:  rgb(255,255,255,0.1);
+}
+
+.container-background {
+  height: 100%;
+    width: 100%;
+    background-image: linear-gradient(to right, rgba(251,194,235,1), rgba(179,202,243,1));
 }
 
 .container {
@@ -13,18 +20,17 @@ mat-paginator {
   padding: 10px;
   background-color: rgb(255,255,255,0.4);
   box-shadow: 5px 3px 10px 5px gray;
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  min-width: 930px;
 }
 
 .container > .product-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
-}
-
-.product-container > .table-container{
-  flex-grow: 1;
 }
 
 .table-container{
@@ -49,4 +55,41 @@ mat-paginator {
 
   :host::ng-deep .mat-form-field-prefix{
     position: initial;
+}
+
+@media only screen and (max-width: 500px) {
+  /* For mobile phones: */
+  .container {
+    min-width:300px;
+    overflow: auto;
+    }
+
+    .container > .product-container > .sticky {
+      position: -webkit-sticky;
+      position: sticky;
+      width: 300px;
+      left: 0;
+      align-self: flex-start;
+    }
+
+    .container > form {
+      position: -webkit-sticky;
+      position: sticky;
+      width: 300px;
+      left: 0;
+      align-self: flex-start;
+    }
+
+    .product-container > .table-container {
+      min-width:300px;
+    }
+  
+    td.mat-cell {
+      padding: 0px 10px;
+      
+    }
+
+    th.mat-header-cell {
+      padding: 0px 10px;
+    }
 }

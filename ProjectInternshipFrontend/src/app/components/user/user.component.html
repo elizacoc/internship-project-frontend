@@ -1,5 +1,5 @@
 <div class="container">
-    <h1>Hello, {{userDetails.username}}!</h1>
+    <h1 class="sticky">Hello, {{userDetails.username}}!</h1>
     <div class="table-container">
     
         <table mat-table [dataSource]="dataSource">
@@ -44,7 +44,7 @@
     </div>
     
     
-    <button mat-raised-button (click)="toggleUserUpdate()">Toggle the account update form!</button>
+    <button class="sticky" mat-raised-button (click)="toggleUserUpdate()">Toggle the account update form!</button>
     <div *ngIf="!!toggleUserUpdateForm" class="form-container">
         <form [formGroup]="updateUserForm" (ngSubmit)="updateAccount()" (ngReset)="resetForm()">
             <div>
@@ -89,7 +89,7 @@
                 </mat-form-field>
             </div>
             <div>
-                <button mat-raised-button color="primary" type="submit" [disabled]="updateUserForm.invalid">Update Account</button>
+                <button mat-raised-button color="primary" type="submit" [disabled]="updateUserForm.invalid">Update</button>
                 <button mat-raised-button color="warn" type="reset">Reset fields</button>
             </div>
         </form>

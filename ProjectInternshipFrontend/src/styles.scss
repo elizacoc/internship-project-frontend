@@ -3,10 +3,19 @@
 
 html, body { height: 100%; }
 body { 
+  width: 100%;
   margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; 
   background-image: linear-gradient(to right, rgba(251,194,235,1), rgba(179,202,243,1));
+  background-repeat: repeat;
+  background-size: cover;
 }
 
-body {
-  padding-bottom: 10rem;
+@media only screen and (max-width: 1300px) {
+  /* For mobile phones: */
+  body {
+    background-image: linear-gradient(to right, rgba(251,194,235,1), rgba(179,202,243,1));
+    background-size: cover;
+    background-repeat: repeat;
+  }
+  
 }

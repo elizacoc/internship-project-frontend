@@ -6,21 +6,37 @@
     flex-direction: column;
 }
 
-.container-buttons {
-    display: grid;
-    grid-gap: 0.2rem;
-    grid-template-columns: repeat(2, 1fr);
-    margin-bottom: 10px;
+.card-style > .container-buttons {
+    // display: grid;
+    // grid-gap: 0.2rem;
+    // grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-content: stretch;
+}
 
+.container-buttons > button {
+    width: 100%;
 }
 
 .card-style{
-    width:30%;
+    width:25%;
     margin: auto;
     margin-top: 5rem;
     padding: 10px;
     background-color: rgb(255,255,255,0.4);
     box-shadow: 5px 3px 10px 5px gray;
+    display: flex;
+    flex-direction: column;
+}
+
+@media only screen and (max-width: 500px) {
+    /* For mobile phones: */
+    .card-style {
+        width: 50%;
+      }
+    
 }
 
  form {
@@ -45,6 +61,7 @@ form > .action-buttons {
    width: 100%;
    margin: 1px 2px;
 }
+
 .state {
     display: flex;
     flex-direction: row;

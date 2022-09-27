@@ -7,7 +7,7 @@ mat-paginator {
 }
 
 .container {
-  width: 75%;
+  width: 50%;
   margin: auto;
   margin-top: 5rem;
   padding: 10px;
@@ -15,6 +15,7 @@ mat-paginator {
   box-shadow: 5px 3px 10px 5px gray;
   display: flex;
   flex-direction: column;
+  min-width: 470px;
 }
 
 .container > .stock-container {
@@ -46,4 +47,30 @@ mat-paginator {
   
 .mat-row:hover .mat-cell {
   border-color: currentColor;
+}
+
+@media only screen and (max-width: 500px) {
+  /* For mobile phones: */
+  .container {
+    min-width: 300px;
+    overflow: auto;
+    }
+
+    .container > mat-form-field {
+      position: -webkit-sticky;
+      position: sticky;
+      width: 300px;
+      left: 0;
+      align-self: flex-start;
+    }
+
+    td.mat-cell {
+      padding: 0px 10px;
+      
+    }
+
+    th.mat-header-cell {
+      padding: 0px 10px;
+    }
+  
 }
