@@ -20,11 +20,9 @@ mat-paginator {
   padding: 10px;
   background-color: rgb(255,255,255,0.4);
   box-shadow: 5px 3px 10px 5px gray;
-  // display: flex;
-  // flex-direction: column;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  min-width: 930px;
+  min-width: 980px;
 }
 
 .container > .product-container {
@@ -56,6 +54,17 @@ mat-paginator {
   :host::ng-deep .mat-form-field-prefix{
     position: initial;
 }
+
+td.mat-cell {
+  padding: 0px 5px;
+  
+}
+
+th.mat-header-cell {
+  padding: 0px 5px;
+}
+
+
 
 @media only screen and (max-width: 500px) {
   /* For mobile phones: */

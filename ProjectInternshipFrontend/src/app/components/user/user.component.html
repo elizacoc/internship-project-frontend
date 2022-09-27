@@ -70,12 +70,12 @@
                 </mat-form-field>
             </div>
             <div>
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" id="pass">
                     <mat-label>Password</mat-label>
                     <input matInput formControlName="password" [type]="!!showPassword ? 'text' : 'password'">
                     <mat-icon matSuffix (click)="showPassword = !showPassword">{{!!showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
-                    <mat-error *ngIf="updateUserForm.controls['password'].touched && updateUserForm.controls['password'].hasError('required')">This field is required!</mat-error>
-                    <mat-error *ngIf="updateUserForm.controls['password'].hasError('maxlength') || updateUserForm.controls['password'].hasError('minlength')">This field must be between 8 and 20 characters</mat-error>
+                    <mat-error *ngIf="updateUserForm.controls['password'].touched && !updateUserForm.controls['password'].hasError('pattern') && updateUserForm.controls['password'].hasError('required')">This field is required!</mat-error>
+                    <mat-error *ngIf="!updateUserForm.controls['password'].hasError('pattern') && (updateUserForm.controls['password'].hasError('maxlength') || updateUserForm.controls['password'].hasError('minlength'))">This field must be between 8 and 20 characters</mat-error>
                     <mat-error *ngIf="updateUserForm.controls['password'].hasError('pattern')">The password must contain at least 1 capital letter, 1 small letter, 1 digit and 1 symbol!</mat-error>
                 </mat-form-field>
             </div>

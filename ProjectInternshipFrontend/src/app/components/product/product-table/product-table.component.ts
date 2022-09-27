@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router, TitleStrategy } from '@angular/router';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { map, Observable, startWith, Subscription } from 'rxjs';
 import { Product } from 'src/app/models/product.model';
 import { ProductService } from 'src/app/services/product/product.service';
@@ -57,6 +57,10 @@ export class ProductTableComponent implements OnInit, OnDestroy{
     );
   }
 
+  ngOnDestroy(): void {
+    this.subscriptionList.forEach((sub) => sub.unsubscribe());
+  }
+
   createProduct(){
     this._router.navigate([`products/create`]);
   }
@@ -76,7 +80,11 @@ export class ProductTableComponent implements OnInit, OnDestroy{
         this.dataSource = new MatTableDataSource<Product>(this.productList);
         this.dataSource.paginator = this.paginator;
         this.options = [];
-        this.productList.forEach((product) => {this.options.push(product.productName)});
+        this.productList.forEach((product) => {
+          if(this.options.includes(product.productName) === false){
+            this.options.push(product.productName)
+          }
+        })
       },
       error: (error: HttpErrorResponse) => {
         console.error('You could not delete the product! ', error.error);
@@ -126,8 +134,6 @@ export class ProductTableComponent implements OnInit, OnDestroy{
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
   
-  ngOnDestroy(): void {
-    this.subscriptionList.forEach((sub) => sub.unsubscribe());
-  }
+  
 
 }

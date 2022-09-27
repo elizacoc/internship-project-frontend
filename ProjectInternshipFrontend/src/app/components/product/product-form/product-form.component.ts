@@ -1,8 +1,8 @@
-import { HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router, Params, TitleStrategy } from '@angular/router';
+import { ActivatedRoute, Router, Params } from '@angular/router';
 import { Subscription, take } from 'rxjs';
 import { Unit } from 'src/app/enums/unit.enum';
 import { Product } from 'src/app/models/product.model';
@@ -17,13 +17,14 @@ import { StockService } from 'src/app/services/stock/stock.service';
 })
 export class ProductFormComponent implements OnInit, OnDestroy {
 
-  public errors: string[] = [];
+  errors: string[] = [];
 
-  private _subscriptionList: Subscription[] = [];
   selectedProduct?: Product;
 
   unitOptions = Object.entries(Unit).map(([key, value]) => ({key, value}));
   productForm!: FormGroup;
+
+  private _subscriptionList: Subscription[] = [];
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -45,77 +46,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     
   }
 
-  private _createForm() {
-    this.productForm = this._formBuilder.group({
-      pzn: [null, [Validators.required, Validators.maxLength(8), Validators.pattern('^[0-9]+$')]],
-      supplier: [null, Validators.maxLength(100)],
-      productName: [null, [Validators.required, Validators.maxLength(100)]],
-      strength: [null, [Validators.required, Validators.maxLength(100)]],
-      packageSize: [null, [Validators.required, Validators.maxLength(20)]],
-      unit: [Unit.ST, [Validators.required, Validators.maxLength(2)]]
-    });
+  ngOnDestroy(): void {
+    this._subscriptionList.forEach((subscription: Subscription) => subscription.unsubscribe());
   }
 
-  private _getPznFromLink(){
-    this._subscriptionList.push(
-      this._activatedRoute.params.pipe(
-        take(1)
-      ).subscribe({
-       next: (params: Params) => {
-        console.log('Get parameter success!');
-        this._getProductByPzn(params['pzn']);
-      },
-       error: () => console.error('Failed to get the parameter! ')
-      })
-    )
-  }
-
-  private _getProductByPzn(pzn: string) {
-    this._subscriptionList.push(
-    this._productService.getProductByPzn(pzn).pipe(
-      take(1)
-    ).subscribe({
-      next: (product: Product) => {
-        console.log('Get product for update success!');
-        this.productForm.patchValue(product);
-        this.selectedProduct = product;
-      },
-      error: (error: HttpErrorResponse) => console.error('Could not get the product! ', error.error)
-    })
-    )
-  }
-
-  private _updateProduct(product: Product){
-    this._subscriptionList.push(
-    this._productService.updateProduct(product).subscribe({
-      next: (product: Product) => {
-        console.log('Product updated with success: ', product);
-        this._router.navigateByUrl('/products');
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('You cannot update the product because: ', error.error);
-        this.errors.push(error.error.concat('\n'));
-        this.errors.forEach((error) => {this.openSnackBar(error)});
-      }
-    })
-    )
-  }
-
-  private _createProduct(product: Product){
-    this._subscriptionList.push(
-    this._productService.createProduct(product).subscribe({
-      next: (product: Product) => {
-        console.log('Product created with success: ', product);
-        this.getStockIdForProduct(product.pzn);
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('You cannot add the new product because: ', error.error);
-        this.errors.push(error.error.concat('\n'));
-        this.errors.forEach((error) => {this.openSnackBar(error)})
-      }
-    })
-    )
-  }
 
   submitProductForm(){
     this.errors = [];
@@ -159,7 +93,71 @@ export class ProductFormComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy(): void {
-    this._subscriptionList.forEach((subscription: Subscription) => subscription.unsubscribe());
+  private _createForm() {
+    this.productForm = this._formBuilder.group({
+      pzn: [null, [Validators.required, Validators.maxLength(8), Validators.pattern('^[0-9]+$')]],
+      supplier: [null, Validators.maxLength(100)],
+      productName: [null, [Validators.required, Validators.maxLength(100)]],
+      strength: [null, [Validators.required, Validators.maxLength(100)]],
+      packageSize: [null, [Validators.required, Validators.maxLength(20)]],
+      unit: [Unit.ST, [Validators.required, Validators.maxLength(2)]]
+    });
+  }
+
+  private _getPznFromLink(){
+    this._subscriptionList.push(
+      this._activatedRoute.params.subscribe({
+       next: (params: Params) => {
+        console.log('Get parameter success!');
+        this._getProductByPzn(params['pzn']);
+      },
+       error: () => console.error('Failed to get the parameter! ')
+      })
+    )
+  }
+
+  private _getProductByPzn(pzn: string) {
+    this._subscriptionList.push(
+    this._productService.getProductByPzn(pzn).subscribe({
+      next: (product: Product) => {
+        console.log('Get product for update success!');
+        this.productForm.patchValue(product);
+        this.selectedProduct = product;
+      },
+      error: (error: HttpErrorResponse) => console.error('Could not get the product! ', error.error)
+    })
+    )
+  }
+
+  private _updateProduct(product: Product){
+    this._subscriptionList.push(
+    this._productService.updateProduct(product).subscribe({
+      next: (product: Product) => {
+        console.log('Product updated with success: ', product);
+        this._router.navigateByUrl('/products');
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('You cannot update the product because: ', error.error);
+        this.errors.push(error.error.concat('\n'));
+        this.errors.forEach((error) => {this.openSnackBar(error)});
+      }
+    })
+    )
+  }
+
+  private _createProduct(product: Product){
+    this._subscriptionList.push(
+    this._productService.createProduct(product).subscribe({
+      next: (product: Product) => {
+        console.log('Product created with success: ', product);
+        this.getStockIdForProduct(product.pzn);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('You cannot add the new product because: ', error.error);
+        this.errors.push(error.error.concat('\n'));
+        this.errors.forEach((error) => {this.openSnackBar(error)})
+      }
+    })
+    )
   }
 }

@@ -5,7 +5,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Params, Route, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Stock } from 'src/app/models/stock.model';
-import { ProductService } from 'src/app/services/product/product.service';
 import { StockService } from 'src/app/services/stock/stock.service';
 
 @Component({
@@ -17,11 +16,11 @@ export class StockFormComponent implements OnInit, OnDestroy {
 
   errors: string[] = [];
 
-  private _subscriptionList: Subscription[] = [];
-
   stockToPersist!: Stock;
 
   stockForm!: FormGroup;
+
+  private _subscriptionList: Subscription[] = [];
 
   constructor(private _formBuilder: FormBuilder, private _stockService: StockService, private _activatedRoute: ActivatedRoute, private _router: Router, private _snackBar: MatSnackBar) { 
     this.createForm();
@@ -55,10 +54,14 @@ export class StockFormComponent implements OnInit, OnDestroy {
     
   }
 
+  ngOnDestroy(): void {
+    this._subscriptionList.forEach((subscription) => subscription.unsubscribe());
+  }
+
   private createForm(){
     this.stockForm = this._formBuilder.group({
-      quantity: [null, [Validators.required]],
-      price: [null, [Validators.required]]
+      quantity: [null, [Validators.required, Validators.min(0)]],
+      price: [null, [Validators.required, Validators.min(0)]]
     })
   }
 
@@ -95,9 +98,5 @@ export class StockFormComponent implements OnInit, OnDestroy {
       verticalPosition: 'top',
       duration: 10 * 1000
     })
-  }
-
-  ngOnDestroy(): void {
-    this._subscriptionList.forEach((subscription) => subscription.unsubscribe());
   }
 }

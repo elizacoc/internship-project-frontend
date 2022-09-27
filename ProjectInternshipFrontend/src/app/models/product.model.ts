@@ -8,7 +8,5 @@ export interface Product {
     strength: string;
     packageSize: string;
     unit: Unit;
-    // quantity: number;
-    // price: number;
     stock?: Stock;
 } 

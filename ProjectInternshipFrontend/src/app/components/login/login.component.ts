@@ -2,12 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from 'src/app/services/login/login.service';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
-import { Subscription, tap } from 'rxjs';
+import { Subscription, tap, take } from 'rxjs';
 import { CrossFieldErrorMatcher } from 'src/app/error/CrossFieldErrorMatcher';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NodeWithI18n } from '@angular/compiler';
 
 @Component({
   selector: 'app-login',
@@ -33,8 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy{
   constructor(
     private _formBuilder: FormBuilder, 
     private _loginService: LoginService, 
-    private _router: Router, 
-    private _activatedRoute: ActivatedRoute, 
+    private _router: Router,
     private _snackBar: MatSnackBar
     ) {
     this.createForm();
@@ -81,7 +79,9 @@ export class LoginComponent implements OnInit, OnDestroy{
     this._loginService.loginUser(formData).pipe(tap((response: HttpResponse<string>) => {if(response.ok){
     }})).subscribe({
       next: (response: HttpResponse<string>) => {
-        this._loginService.getUser(this.loginForm.controls['email'].getRawValue().toString()).subscribe({
+        this._loginService.getUser(this.loginForm.controls['email'].getRawValue().toString()).pipe(
+          take(1)
+        ).subscribe({
           next: (user: User) =>{
           localStorage.setItem('firstName', user.firstName!);
           localStorage.setItem('lastName', user.lastName!);
@@ -99,7 +99,6 @@ export class LoginComponent implements OnInit, OnDestroy{
           value: 'true',
           expiry: new Date().getTime() + (30000 * 1000)
         }
-        // localStorage.setItem('authenticationToken', 'true');
         localStorage.setItem('authenticationToken', JSON.stringify(token))
         this.showError = false;
         this._router.navigate(['/products']);
@@ -123,7 +122,8 @@ export class LoginComponent implements OnInit, OnDestroy{
     this._loginService.registerUser(registeredUser).subscribe({
       next: (user: User) => {
         console.log('User registered with success: ', user);
-        this.isRegisterActive = false
+        this.isRegisterActive = false;
+        this.reset();
       },
       error: (error: HttpErrorResponse) => {
         console.error('User failed to register because: ', error.error);

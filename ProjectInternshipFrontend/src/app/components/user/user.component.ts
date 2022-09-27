@@ -3,7 +3,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CrossFieldErrorMatcher } from 'src/app/error/CrossFieldErrorMatcher';
 import { User } from 'src/app/models/user.model';
@@ -34,17 +33,16 @@ export class UserComponent implements OnInit, OnDestroy {
     creationDate: ""
   };
 
-  private _subscriptionList: Subscription[] = [];
-
   userDetailsDataSource: User[] = [this.userDetails];
 
   dataSource: MatTableDataSource<User> = new MatTableDataSource<User>(this.userDetailsDataSource);
   displayedColumns : string[] = ['firstName', 'lastName', 'username', 'email', 'creationDate'];
 
+  private _subscriptionList: Subscription[] = [];
+
   constructor(
     private _formBuilder: FormBuilder, 
     private _loginService: LoginService, 
-    private _router: Router, 
     private _snackBar: MatSnackBar) { 
     this.createAccountForm();
   }

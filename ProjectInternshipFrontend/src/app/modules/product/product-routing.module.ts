@@ -1,5 +1,4 @@
-import { Component, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ProductTableComponent } from 'src/app/components/product/product-table/product-table.component';
 import { ProductFormComponent } from 'src/app/components/product/product-form/product-form.component';

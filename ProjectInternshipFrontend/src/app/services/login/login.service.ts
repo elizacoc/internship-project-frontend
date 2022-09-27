@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from 'src/app/models/user.model';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
@@ -10,6 +10,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class LoginService {
 
   private readonly _baseurl = 'http://localhost:8081';
+  
+  constructor(private _http: HttpClient) {}
 
   isAuthenticated() {
     const time = new Date();
@@ -17,7 +19,7 @@ export class LoginService {
         const token = JSON.parse(localStorage.getItem('authenticationToken')!);
         if(token.expiry < time.getTime()){
           localStorage.removeItem('authenticationToken');
-          //delete all local storage and logout
+          localStorage.clear();
           return false;
         }
         else {
@@ -27,8 +29,6 @@ export class LoginService {
     }
       return false;
   }
-  
-  constructor(private _http: HttpClient) {}
 
   getUser(email: string): Observable<User>{
     return this._http.get(`${this._baseurl}/user/${email}`,) as Observable<User>

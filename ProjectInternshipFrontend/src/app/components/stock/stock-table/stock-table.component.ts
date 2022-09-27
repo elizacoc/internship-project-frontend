@@ -16,11 +16,11 @@ export class StockTableComponent implements OnInit, OnDestroy {
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  private _subscriptionList: Subscription[] = [];
-
   stockList: Stock[] = [];
   dataSource: MatTableDataSource<Stock> = new MatTableDataSource<Stock>(this.stockList);
   displayedColumns: string[] = ['id', 'quantity', 'price', 'product', 'update'];
+
+  private _subscriptionList: Subscription[] = [];
 
   constructor(private _stockService: StockService, private _router: Router) { }
 
@@ -40,6 +40,10 @@ export class StockTableComponent implements OnInit, OnDestroy {
     )
   }
 
+  ngOnDestroy(): void {
+    this._subscriptionList.forEach((subscription: Subscription) => subscription.unsubscribe());
+  }
+
   updateStock(stock: Stock) {
       console.log('This is the stock to be updated: ', stock);
       this._router.navigate([`/stocks/update/${stock.id}`]);
@@ -48,10 +52,6 @@ export class StockTableComponent implements OnInit, OnDestroy {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  ngOnDestroy(): void {
-    this._subscriptionList.forEach((subscription: Subscription) => subscription.unsubscribe());
   }
 
 }
